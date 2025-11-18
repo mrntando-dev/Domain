@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Ntando Store - Multi-Domain Subdomain Manager{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Manage Subdomains Across<br>
+                <span class="gradient-text">Multiple Domains</span>
+            </h1>
+            <p class="hero-description">
+                Create, manage, and deploy subdomains across .net, .com, .zw, .dev, and .id 
+                with automatic DNS configuration and enterprise-grade security.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary btn-lg" onclick="openCreateModal()">
+                    Get Started
+                </button>
+                <button class="btn btn-secondary btn-lg" onclick="scrollToFeatures()">
+                    Learn More
+                </button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <h3 id="totalSubdomains">0</h3>
+                    <p>Active Subdomains</p>
+                </div>
+                <div class="stat-item">
+                    <h3>5</h3>
+                    <p>TLD Support</p>
+                </div>
+                <div class="stat-item">
+                    <h3>99.9%</h3>
+                    <p>Uptime</p>
+                </div>
+                <div class="stat-item">
+                    <h3>&lt;100ms</h3>
+                    <p>Response Time</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">Powerful Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Multi-Domain Support</h3>
+                <p>Manage subdomains across .net, .com, .zw, .dev, and .id domains from one dashboard</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Enterprise Security</h3>
+                <p>SSL encryption, rate limiting, DDoS protection, and JWT authentication built-in</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Optimized caching, CDN integration, and sub-100ms response times</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Auto DNS Configuration</h3>
+                <p>Automatic DNS record creation and management via Cloudflare API</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-time Analytics</h3>
+                <p>Monitor subdomain performance and get detailed statistics in real-time</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔌</div>
+                <h3>RESTful API</h3>
+                <p>Complete API for programmatic access with comprehensive documentation</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3>JSON-based Storage</h3>
+                <p>Simple, readable, and version-controllable subdomain configuration</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Easy Deployment</h3>
+                <p>Deploy to Render.com, Heroku, or any Python hosting platform</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="domains-section">
+    <div class="container">
+        <h2 class="section-title">Supported Domains</h2>
+        <div class="domains-grid">
+            {% for tld, domain in base_domains.items() %}
+            <div class="domain-card">
+                <div class="domain-icon">{{ tld|upper }}</div>
+                <h3>{{ domain }}</h3>
+                <p>Create subdomains for {{ domain }}</p>
+                <button class="btn btn-outline" onclick="createSubdomainForTLD('{{ tld }}')">
+                    Create Subdomain
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="subdomain-manager">
+    <div class="container">
+        <h2 class="section-title">Subdomain Manager</h2>
+        
+        <div class="manager-controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search subdomains..." 
+                       oninput="searchSubdomains()">
+            </div>
+            <div class="filter-controls">
+                <select id="tldFilter" onchange="filterSubdomains()">
+                    <option value="">All TLDs</option>
+                    {% for tld in base_domains.keys() %}
+                    <option value="{{ tld }}">{{ tld|upper }}</option>
+                    {% endfor %}
+                </select>
+                <select id="statusFilter" onchange="filterSubdomains()">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="subdomainsTable" class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Subdomain</th>
+                        <th>TLD</th>
+                        <th>Target</th>
+                        <th>SSL</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="subdomainsTableBody">
+                    <tr>
+                        <td colspan="7" class="loading">Loading subdomains...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Create Subdomain Modal -->
+<div id="createModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create New Subdomain</h2>
+            <button class="close-btn" onclick="closeCreateModal()">&times;</button>
+        </div>
+        <form id="createSubdomainForm" onsubmit="createSubdomain(event)">
+            <div class="form-group">
+                <label for="subdomain">Subdomain Name *</label>
+                <input type="text" id="subdomain" name="subdomain" 
+                       placeholder="myapp" pattern="[a-z0-9\-]+" required>
+                <small>Only lowercase letters, numbers, and hyphens</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="tld">Domain Extension *</label>
+                <select id="tld" name="tld" required>
+                    {% for tld, domain in base_domains.items() %}
+                    <option value="{{ tld }}">{{ tld|upper }} ({{ domain }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="target">Target IP/Domain *</label>
+                <input type="text" id="target" name="target" 
+                       placeholder="192.168.1.1 or example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="recordType">Record Type</label>
+                <select id="recordType" name="recordType">
+                    <option value="A">A (IPv4 Address)</option>
+                    <option value="AAAA">AAAA (IPv6 Address)</option>
+                    <option value="CNAME">CNAME (Canonical Name)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="sslEnabled" name="sslEnabled" checked>
+                    <span>Enable SSL/TLS</span>
+                </label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Create Subdomain
+                </button>
+            </div>
+        </form>
+        <div id="createResult" class="result-message"></div>
+    </div>
+</div>
+
+<!-- Edit Subdomain Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Subdomain</h2>
+            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form id="editSubdomainForm" onsubmit="updateSubdomain(event)">
+            <input type="hidden" id="editSubdomain" name="subdomain">
+            <input type="hidden" id="editTld" name="tld">
+            
+            <div class="form-group">
+                <label>Full Domain</label>
+                <div id="editFullDomain" class="info-text"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="editTarget">Target IP/Domain *</label>
+                <input type="text" id="editTarget" name="target" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="editStatus">Status</label>
+                <select id="editStatus" name="status">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="editSslEnabled" name="sslEnabled">
+                    <span>Enable SSL/TLS</span>
+                </label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Update Subdomain
+                </button>
+            </div>
+        </form>
+        <div id="editResult" class="result-message"></div>
+    </div>
+</div>
+
+<script>
+    // Load statistics on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadStats();
+        loadSubdomains();
+    });
+</script>
+{% endblock %}
