@@ -1,6 +1,6 @@
 {
-  "example.net": {
-    "subdomain": "example",
+  "ntandostore.net": {
+    "subdomain": "ntandostore",
     "tld": "net",
     "target": "192.168.1.100",
     "record_type": "A",
