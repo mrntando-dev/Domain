@@ -1,0 +1,17 @@
+{
+  "example.net": {
+    "subdomain": "example",
+    "tld": "net",
+    "target": "192.168.1.100",
+    "record_type": "A",
+    "ssl_enabled": true,
+    "created_at": "2024-01-15T10:30:00",
+    "updated_at": "2024-01-15T10:30:00",
+    "status": "active",
+    "dns_record_id": null,
+    "metadata": {
+      "description": "Example subdomain",
+      "owner": "admin"
+    }
+  }
+}
