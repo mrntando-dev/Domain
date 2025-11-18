@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ntando Store - Professional Multi-Domain Subdomain Manager">
+    <title>{% block title %}Ntando Store{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🏪 Ntando Store</h1>
+                <p class="tagline">Multi-Domain Manager</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="/docs" class="nav-link">API Docs</a></li>
+                <li><a href="/admin" class="nav-link">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-primary" onclick="openCreateModal()">
+                    <span>➕</span> New Subdomain
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Ntando Store</h3>
+                    <p>Professional subdomain management across multiple TLDs</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">🐦</a>
+                        <a href="#" class="social-link">📘</a>
+                        <a href="#" class="social-link">💼</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Supported Domains</h4>
+                    <ul class="domain-list">
+                        {% for tld in supported_tlds %}
+                        <li><span class="badge">{{ tld }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/docs">Documentation</a></li>
+                        <li><a href="/api">API Reference</a></li>
+                        <li><a href="/support">Support</a></li>
+                        <li><a href="/status">System Status</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Security</h4>
+                    <ul>
+                        <li>✅ SSL Encryption</li>
+                        <li>✅ DDoS Protection</li>
+                        <li>✅ Rate Limiting</li>
+                        <li>✅ Auto DNS</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Ntando Store. All rights reserved.</p>
+                <p>Powered by Ntando</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
