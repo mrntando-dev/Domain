@@ -1,0 +1,17 @@
+{
+  "default_target": "0.0.0.0",
+  "ssl_enabled": true,
+  "auto_dns": true,
+  "allowed_tlds": ["net", "com", "zw", "dev", "id"],
+  "dns_provider": "cloudflare",
+  "cache_ttl": 300,
+  "rate_limit": {
+    "enabled": true,
+    "requests_per_minute": 100
+  },
+  "security": {
+    "require_api_key": false,
+    "allowed_origins": ["*"],
+    "enable_cors": true
+  }
+}
